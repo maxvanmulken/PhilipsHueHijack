@@ -1,9 +1,11 @@
 import tkinter
 import os
 import threading
+import time
 from tkinter import Tk, Label, Button, Frame, LabelFrame, IntVar, colorchooser
+from tkinter.messagebox import showinfo
+import webbrowser
 from tkinter.ttk import Radiobutton
-
 
 class MyFirstGUI:
     def __init__(self, master):
@@ -15,8 +17,8 @@ class MyFirstGUI:
         self.create_bottom_frame()
 
     def huijack(self):
-        self.master.quit()
-        WaitThread().run(self.mode.get())
+        self.master.destroy()
+        WaitThread(self.mode.get()).run()
 
     def create_right_frame(self, bottom_frame):
         right_frame = Frame(bottom_frame, pady=20)
@@ -82,6 +84,8 @@ class Execution(threading.Thread):
         print("===============")
         self.setup()
 
+        time.sleep(3)
+
         if self.mode >= 0:
             self.do_arp_posioning()
 
@@ -107,9 +111,10 @@ class Execution(threading.Thread):
 
 
 class WaitThread:
-    def __init__(self):
+    def __init__(self, mode):
         self.dots = 1
         self.time_out = 250
+        self.execute = Execution(mode)
         wait_window = Tk()
         wait_window.title = "Huejacking"
 
@@ -118,15 +123,23 @@ class WaitThread:
         self.wait_animation.pack()
         self.wait_window = wait_window
 
-    def run(self, mode):
+    def run(self):
         self.wait_window.after(self.time_out, self.update)
-        Execution(mode).start()
+        self.execute.start()
         self.wait_window.mainloop()
 
     def update(self):
-        self.wait_window.after(self.time_out, self.update)
-        self.wait_animation.config(text="."*self.dots)
-        self.dots = (self.dots+1) % 5
+        if self.execute.isAlive():
+            self.wait_window.after(self.time_out, self.update)
+            self.wait_animation.config(text="." * self.dots)
+            self.dots = (self.dots + 1) % 5
+        else:
+            if 'mart' in os.getlogin().lower():
+                url = 'https://www.youtube.com/watch?v=kkNx12QPpv0'
+            else:
+                url = "https://www.youtube.com/watch?v=1Bix44C1EzY"
+            webbrowser.open_new_tab(url)
+            self.wait_window.destroy()
 
 
 def clear():
