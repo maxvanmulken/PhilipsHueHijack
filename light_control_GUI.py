@@ -108,13 +108,11 @@ class ControlLightsGUI:
 
     @staticmethod
     def select_light(light, selected):
-        print(selected.get())
         light.set('selected', selected.get())
 
     def toggle_lights(self):
         for light in self.lights:
-            print(light.get('id'))
-            light.toggle()
+            light.colorloop()
 
     def create_middle_frame(self, master):
         middle_frame = Frame(master, bg="black")
@@ -236,13 +234,13 @@ def convert_hex_to_xy(hex_str):
     y = r * 0.283881 + g * 0.668433 + b * 0.047685
     z = r * 0.000000 + g * 0.072310 + b * 0.986039
 
-    sum = x + y + z
+    sum_xyz = x + y + z
 
-    if sum == 0:
+    if sum_xyz == 0:
         x = 0
         y = 0
     else:
-        x = x / sum
-        y = y / sum
+        x = x / sum_xyz
+        y = y / sum_xyz
 
-    return [x, y]
+    return [int(x * 10000) / 10000, int(y * 10000) / 10000]

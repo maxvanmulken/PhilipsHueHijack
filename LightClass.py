@@ -7,7 +7,7 @@ class Light:
             'id': light_id,
             'name': name,
             'state': state,
-            'color': color,
+            'color': list(color),
             'selected': False,
             'link': 'http://' + ipBridge + "/api/" + username + "/lights/" + light_id
         }
@@ -32,7 +32,7 @@ class Light:
         if not self.get('selected'):
             return
 
-        requests.put(self.get('link') + "/state", "{\"on\": true, \"xy\": \"" + str(self.get('color')) + "\"}")
+        requests.put(self.get('link') + "/state", "{\"on\": true, \"xy\": " + str(self.get('color')) + "}")
 
     def colorloop(self):
         if not self.get('selected'):
