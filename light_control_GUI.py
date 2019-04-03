@@ -32,12 +32,9 @@ class ControlLightsGUI:
                 response_light_dict = json.loads(response_light.content)
 
                 xy = list(response_light_dict['state']['xy'])
-                bri = int(response_light_dict['state']['bri'])
                 on = bool(response_light_dict['state']['on'])
 
-                rgb = convert_xy_to_rgb(xy, bri)
-                print(rgb)
-                self.lights.append(Light(key, value['name'], on, rgb))
+                self.lights.append(Light(key, value['name'], on, xy, self.ipBridge, self.username))
 
         self.create_left_frame(self.control_lights)
         self.create_middle_frame(self.control_lights)
@@ -99,7 +96,7 @@ class ControlLightsGUI:
             master,
             width=32,
             height=32,
-            bg=light.get("color"),
+            bg=convert_xy_to_hex(light.get("color")),
             bd=2,
             highlightbackground="white",
             highlightcolor="white",
@@ -117,7 +114,7 @@ class ControlLightsGUI:
     def toggle_lights(self):
         for light in self.lights:
             print(light.get('id'))
-            light.toggle(self.ipBridge, self.username)
+            light.toggle()
 
     def create_middle_frame(self, master):
         middle_frame = Frame(master, bg="black")
@@ -176,7 +173,7 @@ class ControlLightsGUI:
             button.pack()
 
 
-def convert_xy_to_rgb(xy, brightness):
+def convert_xy_to_hex(xy, brightness=255):
     x = xy[0]
     y = xy[1]
     z = 1.0 - x - y
@@ -222,3 +219,30 @@ def convert_xy_to_rgb(xy, brightness):
     rgb = "#" + r + g + b
 
     return rgb
+
+
+def convert_hex_to_xy(hex_str):
+    hex_str = hex_str.lower()
+
+    r = float(int(hex_str[1:3], 16)) / 255
+    g = float(int(hex_str[3:5], 16)) / 255
+    b = float(int(hex_str[5:7], 16)) / 255
+
+    r = r / 12.92 if r <= 0.04045 else np.power((r + 0.055) / (1.0 + 0.055), 2.4)
+    g = g / 12.92 if g <= 0.04045 else np.power((g + 0.055) / (1.0 + 0.055), 2.4)
+    b = b / 12.92 if b <= 0.04045 else np.power((b + 0.055) / (1.0 + 0.055), 2.4)
+
+    x = r * 0.664511 + g * 0.154324 + b * 0.162028
+    y = r * 0.283881 + g * 0.668433 + b * 0.047685
+    z = r * 0.000000 + g * 0.072310 + b * 0.986039
+
+    sum = x + y + z
+
+    if sum == 0:
+        x = 0
+        y = 0
+    else:
+        x = x / sum
+        y = y / sum
+
+    return [x, y]
