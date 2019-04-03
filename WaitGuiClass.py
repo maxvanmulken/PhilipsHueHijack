@@ -1,8 +1,8 @@
 from tkinter import Tk, Label
 from tkinter.messagebox import showinfo
 
-from scripts.ExecutionClass import Execution
-from scripts.light_control_GUI import ControlLightsGUI
+from ExecutionClass import Execution
+from light_control_GUI import ControlLightsGUI
 
 
 class WaitGui:
@@ -36,4 +36,4 @@ class WaitGui:
                 self.control()
 
     def control(self):
-        ControlLightsGUI()
+        ControlLightsGUI(self.execute.username, self.execute.ipBridge)
