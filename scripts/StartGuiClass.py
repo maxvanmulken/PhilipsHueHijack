@@ -1,7 +1,8 @@
+import os
 import tkinter
 from tkinter import Label, Button, Frame, LabelFrame, IntVar, Radiobutton
 
-from scripts.WaitGuiClass import WaitThread
+from scripts.WaitGuiClass import WaitGui
 
 
 class StartGui:
@@ -15,7 +16,7 @@ class StartGui:
 
     def huejack(self):
         self.master.destroy()
-        WaitThread(self.mode.get()).run()
+        WaitGui(self.mode.get()).run()
 
     def create_right_frame(self, bottom_frame):
         right_frame = Frame(bottom_frame, pady=20)
@@ -23,7 +24,7 @@ class StartGui:
         execute_button = Button(right_frame, text="Huejack", command=self.huejack)
         execute_button.pack()
 
-        greet_button = Button(right_frame, text="close", command=self.master.quit)
+        greet_button = Button(right_frame, text="Close", command=self.master.quit)
         greet_button.pack()
 
         right_frame.grid(row=0, column=1, sticky="nsew")
@@ -32,8 +33,8 @@ class StartGui:
     def create_left_frame(self, bottom_frame):
         left_frame = Frame(bottom_frame, pady=20)
 
-        Radiobutton(left_frame, text="Only ARP poisoning", variable=self.mode, value=0).pack(anchor=tkinter.W)
-        Radiobutton(left_frame, text="Everything", variable=self.mode, value=1).pack(anchor=tkinter.W)
+        Radiobutton(left_frame, text="Deny service", variable=self.mode, value=0).pack(anchor=tkinter.W)
+        Radiobutton(left_frame, text="Hijack control", variable=self.mode, value=1).pack(anchor=tkinter.W)
 
         left_frame.grid(row=0, column=0, sticky="nsew")
         return left_frame
@@ -41,7 +42,8 @@ class StartGui:
     def create_top_frame(self):
         top_frame = LabelFrame(self.master)
 
-        label = Label(top_frame, text="Ultimate Philips Hue Hijacking Tool For Pro's!")
+        label_string = "Huejacking tool made by Port 25565\nLuuk Schuurmans, Mart Hagedoorn, Max van Mulken"
+        label = Label(top_frame, text=label_string)
         label.pack()
 
         top_frame.pack()

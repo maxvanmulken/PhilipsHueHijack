@@ -25,7 +25,7 @@ class Execution(threading.Thread):
         print("===============")
         self.setup()
 
-        time.sleep(3)
+        time.sleep(1)
 
         if self.mode >= 0:
             self.do_arp_posioning()
