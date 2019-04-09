@@ -13,10 +13,14 @@ from LightClass import Light
 class ControlLightsGUI:
 
     def __init__(self, username, ipBridge):
+        self.timeout = 500
+
         self.control_lights = Tk()
         self.control_lights.configure(background="black")
         self.green_color = "#20C20E"
         self.control_lights.title("MML pro tools")
+
+        self.control_lights.after(self.timeout, self.update)
 
         self.username = username
         self.ipBridge = ipBridge
@@ -200,6 +204,12 @@ class ControlLightsGUI:
                 height=2,
             )
             button.pack()
+
+    def update(self):
+        print('update called')
+        self.control_lights.after(self.timeout, self.update)
+        for light in self.lights:
+            light.set_widget_color(convert_xy_to_hex(light.get('color')))
 
 
 def convert_xy_to_hex(xy, brightness=255):

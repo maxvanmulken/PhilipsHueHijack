@@ -8,8 +8,11 @@ from light_control_GUI import ControlLightsGUI
 
 class StartGui:
     def __init__(self, master):
+        self.green_color = "#20C20E"
+
         self.master = master
         master.title("MML pro tools")
+        master.configure(background="black")
 
         self.mode = IntVar()
         self.create_top_frame()
@@ -18,26 +21,62 @@ class StartGui:
     def huejack(self):
         self.master.destroy()
 
-        ControlLightsGUI('KIyuOC6iDM2i52oYIdeFcDOE4PCcr8jQMB4Jxm1p', '192.168.178.178')
-        #WaitGui(self.mode.get()).run()
+        #ControlLightsGUI('KIyuOC6iDM2i52oYIdeFcDOE4PCcr8jQMB4Jxm1p', '192.168.178.178')
+        WaitGui(self.mode.get()).run()
 
     def create_right_frame(self, bottom_frame):
-        right_frame = Frame(bottom_frame, pady=20)
+        right_frame = Frame(bottom_frame, pady=20, bg="black")
 
-        execute_button = Button(right_frame, text="Huejack", command=self.huejack)
+        execute_button = Button(
+            right_frame,
+            text="Huejack",
+            command=self.huejack,
+            fg="white",
+            background=self.green_color,
+            activebackground="green4",
+            activeforeground="white"
+        )
+
         execute_button.pack()
 
-        greet_button = Button(right_frame, text="Close", command=self.master.quit)
+        greet_button = Button(
+            right_frame,
+            text="Close",
+            command=self.master.quit,
+            fg="white",
+            background=self.green_color,
+            activebackground="green4",
+            activeforeground="white"
+        )
+
         greet_button.pack()
 
         right_frame.grid(row=0, column=1, sticky="nsew")
         return right_frame
 
     def create_left_frame(self, bottom_frame):
-        left_frame = Frame(bottom_frame, pady=20)
+        left_frame = Frame(bottom_frame, pady=20, bg="black")
 
-        Radiobutton(left_frame, text="Deny service", variable=self.mode, value=0).pack(anchor=tkinter.W)
-        Radiobutton(left_frame, text="Hijack control", variable=self.mode, value=1).pack(anchor=tkinter.W)
+        Radiobutton(
+            left_frame,
+            text="Deny service",
+            variable=self.mode,
+            value=0,
+            fg=self.green_color,
+            bg='black',
+            activebackground="black",
+            activeforeground=self.green_color
+        ).pack(anchor=tkinter.W)
+        Radiobutton(
+            left_frame,
+            text="Hijack control",
+            variable=self.mode,
+            value=1,
+            fg=self.green_color,
+            bg='black',
+            activebackground="black",
+            activeforeground=self.green_color
+        ).pack(anchor=tkinter.W)
 
         left_frame.grid(row=0, column=0, sticky="nsew")
         return left_frame
@@ -46,7 +85,7 @@ class StartGui:
         top_frame = LabelFrame(self.master)
 
         label_string = "Huejacking tool made by Port 25565\nLuuk Schuurmans, Mart Hagedoorn, Max van Mulken"
-        label = Label(top_frame, text=label_string)
+        label = Label(top_frame, text=label_string, fg=self.green_color, bg='black')
         label.pack()
 
         top_frame.pack()
