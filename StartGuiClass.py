@@ -18,8 +18,8 @@ class StartGui:
     def huejack(self):
         self.master.destroy()
 
-        # ControlLightsGUI('KIyuOC6iDM2i52oYIdeFcDOE4PCcr8jQMB4Jxm1p', '192.168.178.178')
-        WaitGui(self.mode.get()).run()
+        ControlLightsGUI('KIyuOC6iDM2i52oYIdeFcDOE4PCcr8jQMB4Jxm1p', '192.168.178.178')
+        #WaitGui(self.mode.get()).run()
 
     def create_right_frame(self, bottom_frame):
         right_frame = Frame(bottom_frame, pady=20)

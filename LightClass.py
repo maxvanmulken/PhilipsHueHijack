@@ -9,7 +9,8 @@ class Light:
             'state': state,
             'color': list(color),
             'selected': False,
-            'link': 'http://' + ipBridge + "/api/" + username + "/lights/" + light_id
+            'link': 'http://' + ipBridge + "/api/" + username + "/lights/" + light_id,
+            'widget': None,
         }
 
     def get(self, variable):
@@ -18,7 +19,7 @@ class Light:
     def set(self, variable, value):
         self.variables[variable] = value
 
-    def toggle(self):
+    def toggle(self, hex_color):
         if not self.get('selected'):
             return
         if self.get('state'):
@@ -27,12 +28,31 @@ class Light:
             requests.put(self.get('link') + "/state", "{\"on\": true}")
 
         self.set('state', not self.get('state'))
+        name, color = self.get('widget')
+        if self.get('state'):
+            color.config(bg=hex_color)
+        else:
+            color.config(bg='#000000')
 
-    def color(self):
+    def color(self, xy, hex_color):
         if not self.get('selected'):
             return
 
+        self.set('color', xy)
         requests.put(self.get('link') + "/state", "{\"on\": true, \"xy\": " + str(self.get('color')) + "}")
+
+        self.set_widget_color(hex_color)
+
+    def set_widget_color(self, hex_color):
+        if not self.get('selected'):
+            return
+
+        name, color = self.get('widget')
+
+        if self.get('state'):
+            color.config(bg=hex_color)
+        else:
+            color.config(bg="#000000")
 
     def colorloop(self):
         if not self.get('selected'):

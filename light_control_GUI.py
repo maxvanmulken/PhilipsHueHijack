@@ -1,5 +1,6 @@
 import json
 from tkinter import Tk, Label, Button, Frame, Checkbutton, IntVar, Scale, HORIZONTAL
+from tkinter.colorchooser import *
 import numpy as np
 from tkinter.messagebox import showinfo
 from tkinter.ttk import Style
@@ -58,7 +59,8 @@ class ControlLightsGUI:
         buttons = [
             Button(
                 left_top_window,
-                text="Pick color"
+                text="Pick color",
+                command=self.color_lights
             ),
             Button(
                 left_top_window,
@@ -74,7 +76,7 @@ class ControlLightsGUI:
         left_bottom_frame = Frame(master, bg="black")
 
         for light in self.lights:
-            self.create_light_widget(left_bottom_frame, light)
+            light.set('widget', self.create_light_widget(left_bottom_frame, light))
 
         left_bottom_frame.pack()
 
@@ -92,6 +94,7 @@ class ControlLightsGUI:
             activeforeground=self.green_color,
         )
 
+        print(light.get('color'))
         light_state = Frame(
             master,
             width=32,
@@ -106,13 +109,25 @@ class ControlLightsGUI:
         light_checkbox.grid(row=light.get('id'), column=0, pady=2)
         light_state.grid(row=light.get('id'), column=1, pady=2)
 
+        return light_checkbox, light_state
+
     @staticmethod
     def select_light(light, selected):
         light.set('selected', selected.get())
 
+    def color_lights(self):
+        color = askcolor('#ffffff', parent=self.control_lights, title="Pick the new color for the chosen lights")[1]
+
+        if color is None:
+            return
+
+        for light in self.lights:
+            light.color(convert_hex_to_xy(color), color)
+
     def toggle_lights(self):
         for light in self.lights:
-            light.colorloop()
+            light.toggle(convert_xy_to_hex(light.get('color')))
+            light.set_widget_color(convert_xy_to_hex(light.get('color')))
 
     def create_middle_frame(self, master):
         middle_frame = Frame(master, bg="black")
@@ -143,19 +158,35 @@ class ControlLightsGUI:
         buttons = [
             Button(
                 right_window,
-                text="Rainbow Gay Mode",
+                text="Rainbow Mode",
+                command=self.rainbow_mode
             ),
             Button(
                 right_window,
                 text="Disco mode",
+                command=self.disco_mode
             ),
             Button(
                 right_window,
                 text="Send alert",
+                command=self.alert_mode
             ),
         ]
         self.style_buttons(buttons)
         right_window.grid(row=0, column=2, sticky="nsew")
+
+    def rainbow_mode(self):
+        for lights in self.lights:
+            lights.colorloop()
+
+    def disco_mode(self):
+        for light in self.lights:
+            light.colorloop()
+            light.alert()
+
+    def alert_mode(self):
+        for light in self.lights:
+            light.alert()
 
     def style_buttons(self, buttons):
         for button in buttons:
@@ -178,9 +209,9 @@ def convert_xy_to_hex(xy, brightness=255):
     Y = float(brightness) / 255
     X = (Y / y) * x
     Z = (Y / y) * z
-    r =  X * 1.656492 - Y * 0.354851 - Z * 0.255038
+    r = X * 1.656492 - Y * 0.354851 - Z * 0.255038
     g = -X * 0.707196 + Y * 1.655397 + Z * 0.036152
-    b =  X * 0.051713 - Y * 0.121364 + Z * 1.011530
+    b = X * 0.051713 - Y * 0.121364 + Z * 1.011530
 
     r = 12.92 * r if r <= 0.0031308 else (1.0 + 0.055) * np.power(r, (1.0 / 2.4)) - 0.055
     g = 12.92 * g if g <= 0.0031308 else (1.0 + 0.055) * np.power(g, (1.0 / 2.4)) - 0.055
